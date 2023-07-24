@@ -8,8 +8,8 @@ services:
     restart: unless-stopped
     environment:
       PHP_IDE_CONFIG: "serverName=Docker"
-#    depends_on:
-#      - mysql
+    #    depends_on:
+    #      - mysql
     networks:
       courselab:
         ipv4_address: ${API_IPV4}
@@ -83,4 +83,4 @@ services:
 #        ipv4_address: ${PHPMYADMIN_IPV4}
 
 volumes:
-  mysql:
+ mysql:
