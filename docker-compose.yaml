@@ -11,12 +11,12 @@ services:
     networks:
       - ${PROJECT_NAME}
 
-#  frontend:
-#    build: ./frontend
-#    container_name: ${PROJECT_NAME}-frontend
-#    networks:
-#      courselab:
-#        ipv4_address: ${FRONTEND_IPV4}
+  frontend:
+    build: ./frontend
+    container_name: ${PROJECT_NAME}-frontend
+    networks:
+      courselab:
+        ipv4_address: ${FRONTEND_IPV4}
 #
 #  nginx:
 #    build:

@@ -14,18 +14,18 @@ services:
       courselab:
         ipv4_address: ${API_IPV4}
 
-#  frontend:
-#    build:
-#      dockerfile: ../docker/frontend/Dockerfile.local
-#    #command: npm start
-#    stdin_open: true
-#    tty: true
-#    restart: unless-stopped
-#    volumes:
-#      - ./frontend:${FRONTEND_DIRECTORY}
-#    environment:
-#      - CHOKIDAR_USEPOLLING=true
-#      - WDS_SOCKET_PORT=0
+  frontend:
+    build:
+      dockerfile: ../docker/frontend/Dockerfile.local
+    #command: npm start
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+    volumes:
+      - ./frontend:${FRONTEND_DIRECTORY}
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - WDS_SOCKET_PORT=0
 #
 #  nginx:
 #    build:
