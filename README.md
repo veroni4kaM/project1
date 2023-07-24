@@ -73,7 +73,7 @@ docker-compose logs -f --tail 50 nginx
 
 For FRONTEND container use:
 ```text
-docker-compose exec frontend
+docker-compose exec frontend sh
 ```
 
 For API container use:
