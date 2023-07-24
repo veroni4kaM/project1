@@ -23,5 +23,3 @@ RUN apk add --update --virtual .build-deps autoconf g++ make zlib-dev curl-dev \
   && rm -rf /var/cache/apk/*
 
 WORKDIR /var/www/courselab/api
-
-#CMD /usr/local/sbin/php-fpm -D

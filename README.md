@@ -78,12 +78,12 @@ docker-compose exec frontend
 
 For API container use:
 ```text
-docker-compose exec api
+docker-compose exec api sh
 ```
 
 For NGINX container use:
 ```text
-docker-compose exec nginx
+docker-compose exec nginx sh
 ```
 
 
