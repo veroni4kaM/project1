@@ -17,7 +17,7 @@ services:
     networks:
       courselab:
         ipv4_address: ${FRONTEND_IPV4}
-#
+
   nginx:
     build:
       context: ./docker/nginx
@@ -33,6 +33,7 @@ services:
     networks:
       courselab:
         ipv4_address: ${NGINX_IPV4}
+
 
 volumes:
   api:
