@@ -13,9 +13,11 @@ RUN set -ex && apk --no-cache add libxml2-dev
 
 RUN apk update \
     && apk add --no-cache --update rabbitmq-c rabbitmq-c-dev libssh-dev postgresql-dev curl libxslt-dev libxml2-dev \
-    && docker-php-ext-install pdo_mysql pdo_pgsql pdo sockets bcmath xsl xml soap pcntl \
-    && apk add --no-cache $PHPIZE_DEPS \
-    && rm -rf /var/cache/apk/*
+        && docker-php-ext-install pdo_mysql pdo_pgsql pdo sockets bcmath xsl xml soap pcntl \
+        && apk add --no-cache $PHPIZE_DEPS \
+        && pecl install -o -f redis opcache xdebug-3.1.6 mongodb \
+        && docker-php-ext-enable redis opcache xdebug mongodb \
+        && rm -rf /var/cache/apk/*
 
 RUN apk add --update --virtual .build-deps autoconf g++ make zlib-dev curl-dev \
   && echo -e "memory_limit=2048M" > /usr/local/etc/php/conf.d/memory-limit.ini \
