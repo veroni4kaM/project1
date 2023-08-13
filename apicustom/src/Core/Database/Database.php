@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Core\Database;
-use Database\PDO;
+
+use PDO;
 
 class Database
 {
@@ -19,9 +20,16 @@ class Database
         $this->dbname = $dbname;
     }
 
+    public function __dectruct()
+    {
+        # Видалити об'єкт
+        unset($this->pdo);
+    }
+
     public function getConnectionString()
     {
         return "mysql:host={$this->host};dbname={$this->dbname}";
+
     }
 
     public function connect()
@@ -38,8 +46,15 @@ class Database
     {
         $sth = $this->pdo->prepare($builder->getSql());
         $params = $builder->getParams();
-        foreach ($params as $key => $value)
+        /*echo("\n----params-----------\n");
+        var_dump($params);
+        echo("\n---------------\n");*/
+        foreach ($params as $key => $value) {
             $sth->bindValue($key, $value);
+        }
+        /*echo("\n---------------\n");
+        var_dump($sth);
+        echo("\n---------------\n");*/
         $sth->execute();
         return $sth->fetchAll();
     }
