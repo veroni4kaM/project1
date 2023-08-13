@@ -1,5 +1,6 @@
 <?php
 
+namespace App\Core\Database;
 class QueryBuilder
 {
 
@@ -9,7 +10,6 @@ class QueryBuilder
     protected $where;
     protected $params;
     protected $joins;
-
 
 
     public function __construct()
@@ -27,11 +27,13 @@ class QueryBuilder
         $this->fields = $fields_string;
         return $this;
     }
+
     public function from($table)
     {
         $this->table = $table;
         return $this;
     }
+
     public function insert($data)
     {
         $this->type = "insert";
@@ -56,6 +58,7 @@ class QueryBuilder
         $this->params = []; // Очищуємо параметри для DELETE-запиту
         return $this;
     }
+
     public function join($table, $on)
     {
         $this->joins[] = "JOIN {$table} ON {$on}";
@@ -73,6 +76,7 @@ class QueryBuilder
         $this->joins[] = "RIGHT JOIN {$table} ON {$on}";
         return $this;
     }
+
     public function getSql()
     {
         switch ($this->type) {
