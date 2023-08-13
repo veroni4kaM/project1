@@ -1,5 +1,8 @@
 <?php
 
+namespace App\Core\Database;
+use Database\PDO;
+
 class Database
 {
     protected $host;

@@ -1,6 +1,12 @@
 <?php
 
 # Обробляє url
+namespace App\Controllers;
+
+use App\Core\Attributes\Route;
+use App\Core\Response;
+use ReflectionClass;
+
 class FrontController
 {
     public function run()
@@ -14,20 +20,36 @@ class FrontController
         if (!empty($url_elements) && !empty($url_elements[0])) {
             # Формуємо назви
             # ucfirst() - перша літера велика
-            $controller = ucfirst($url_elements[0]) . 'Controller';
+            $controller = 'App\Controllers\\'.ucfirst($url_elements[0]) . 'Controller';
             # Чи існує елемент
-//            if (isset($url_elements[1])){
-//                $method = $url_elements[1];
-//            } else
-//                $method = 'index';
             $method = !empty($url_elements[1]) ? $url_elements[1] : "index";
         } else {
-            $controller = "SiteController";
+            $controller = "App\Controllers\SiteController";
             $method = "index";
         }
         # Перевірка існування класу та методу
         if (class_exists($controller)) {
             $controller_object = new $controller();
+
+            $routes = [];
+
+            $reflectionClass = new ReflectionClass($controller_object);
+            $method_list = $reflectionClass->getMethods();
+            foreach ($method_list as $reflectionMethod) {
+                $attributes = $reflectionMethod->getAttributes(Route::class);
+                foreach ($attributes as $attribute) {
+                    if ($attribute->getName() === Route::class) {
+                        /** @var Route $route */
+                        $route = $attribute->newInstance();
+                        $routes[$route->getPath()] = [
+                            'action' => $reflectionMethod->getName(),
+                            'method' => $route->getMethod()];
+                    }
+                }
+            }
+            if (!empty($routes[$method]))
+                $method = $routes[$method]['action'];
+            var_dump($controller);
             if (method_exists($controller, $method)) {
                 /** @var $response Response */
                 $response = $controller_object->$method();
