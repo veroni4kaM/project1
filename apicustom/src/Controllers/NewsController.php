@@ -2,17 +2,24 @@
 
 namespace App\Controllers;
 
-use App\Core\Attributes\Route;
+use App\Core\Controller;
 use App\Core\Response;
+use App\Core\Attributes\Route;
 
-class NewsController
+class NewsController extends Controller
 {
     /**
      * @return Response
      */
-    public function list(): Response
+    public function list(): string
     {
-        return new Response('List', "List!!!");
+        return $this->render(
+            [
+                'title' => 'text',
+                'text' => 'some text'
+            ]
+        );
+        //return new Response('List', "List!!!");
     }
 
     /**
@@ -21,16 +28,23 @@ class NewsController
     #[Route("addition")]
     public function add(): Response
     {
-        return new Response('list', "Addition");
+        return new Response('Add', "Add!!!");
     }
 
     /**
      * @return Response
      */
-    // /api/news/home
     #[Route("home")]
     public function index(): Response
     {
-        return new Response('list', "Home");
+        return new Response('Index', "Index!!!");
     }
+
+    public function render(array $assoc_array): string
+    {
+        $assoc_array['module'] = 'news';
+        return parent::render($assoc_array);
+    }
+
+
 }

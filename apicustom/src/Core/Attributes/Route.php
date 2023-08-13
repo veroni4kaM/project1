@@ -1,28 +1,26 @@
 <?php
 
 namespace App\Core\Attributes;
-
-
 use Attribute;
 
 #[Attribute]
 class Route
 {
-    protected $path;
-    protected $method;
+    protected string $path;
+    protected string $method;
 
-    public function __construct($path, $method = "GET")
+    public function __construct(string $path, string $method = "GET")
     {
         $this->path = $path;
         $this->method = $method;
     }
 
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
 
-    public function getMethod()
+    public function getMethod(): string
     {
         return $this->method;
     }
