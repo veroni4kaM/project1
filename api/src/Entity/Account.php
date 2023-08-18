@@ -19,22 +19,30 @@ class Account
 
     #[ORM\ManyToOne(targetEntity: User::class,inversedBy: "account")]
     private ?User $user = null;
-
     #[ORM\ManyToOne(targetEntity: Currency::class,inversedBy: "account")]
     private ?Currency $currency = null;
 
 
-
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getBalance(): ?string
     {
         return $this->balance;
     }
 
+    /**
+     * @param string $balance
+     * @return $this
+     */
     public function setBalance(string $balance): static
     {
         $this->balance = $balance;
@@ -42,23 +50,39 @@ class Account
         return $this;
     }
 
+    /**
+     * @return User|null
+     */
     public function getUser(): ?User
     {
         return $this->user;
     }
 
+    /**
+     * @param User|null $user
+     * @return void
+     */
     public function setUser(?User $user): void
     {
         $this->user = $user;
     }
 
+    /**
+     * @return Currency|null
+     */
     public function getCurrency(): ?Currency
     {
         return $this->currency;
     }
 
-    public function setCurrency(?Currency $currency): void
+
+    /**
+     * @param Currency|null $currency
+     * @return $this
+     */
+    public function setCurrency(?Currency $currency): self
     {
         $this->currency = $currency;
+        return $this;
     }
 }

@@ -23,16 +23,26 @@ class Recipient
     private ?User $user = null;
 
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
+    /**
+     * @param string $name
+     * @return $this
+     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -40,11 +50,18 @@ class Recipient
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getAccountNumber(): ?string
     {
         return $this->account_number;
     }
 
+    /**
+     * @param string $account_number
+     * @return $this
+     */
     public function setAccountNumber(string $account_number): static
     {
         $this->account_number = $account_number;
@@ -52,13 +69,21 @@ class Recipient
         return $this;
     }
 
+    /**
+     * @return User|null
+     */
     public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUser(?User $user): void
+    /**
+     * @param User|null $user
+     * @return $this
+     */
+    public function setUser(?User $user): self
     {
         $this->user = $user;
+        return $this;
     }
 }
