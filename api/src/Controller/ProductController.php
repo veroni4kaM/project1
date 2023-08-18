@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\Category;
-use App\Entity\Product;
+/*use App\Entity\Category;
+use App\Entity\Product;*/
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,23 +18,23 @@ class ProductController extends AbstractController
     /**
      * @var EntityManagerInterface
      */
-    private EntityManagerInterface $entityManager;
+    //private EntityManagerInterface $entityManager;
 
     /**
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    /*public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-    }
+    }*/
 
     /**
      * @param Request $request
      * @return JsonResponse
      * @throws Exception
      */
-    #[Route('product-create', name: 'product_create')]
-    public function create(Request $request): JsonResponse
+    //#[Route('product-create', name: 'product_create')]
+    /*public function create(Request $request): JsonResponse
     {
         $requestData = json_decode($request->getContent(), true);
 
@@ -63,46 +63,46 @@ class ProductController extends AbstractController
         $this->entityManager->flush();
 
         return new JsonResponse($product,Response::HTTP_CREATED);
-    }
+    }*/
 
     /**
      * @return JsonResponse
      */
-    #[Route('product-all', name: 'product_all')]
+    /*#[Route('product-all', name: 'product_all')]
     public function getAll(): JsonResponse
     {
         $products = $this->entityManager->getRepository(Product::class)->findBy();
 
         return new JsonResponse($products);
-    }
+    }*/
 
     /**
      * @param string $id
      * @return JsonResponse
      * @throws Exception
      */
-    #[Route('product/{id}', name: 'product_get_item')]
-    public function getItem(string $id): JsonResponse
-    {
-        $product = $this->entityManager->getRepository(Product::class)->find($id);
+    //#[Route('product/{id}', name: 'product_get_item')]
+    //public function getItem(string $id): JsonResponse
+    //{
+        /*product = $this->entityManager->getRepository(Product::class)->find($id);
 
         if (!$product) {
             throw new Exception("Product with id " . $id . " not found");
         }
 
-        return new JsonResponse($product);
-    }
+        return new JsonResponse($product);*/
+   // }
 
     /**
      * @param string $id
      * @return JsonResponse
      * @throws Exception
      */
-    #[Route('product-update/{id}', name: 'product_update_item')]
-    public function updateProduct(string $id): JsonResponse
-    {
-        /** @var Product $product */
-        $product = $this->entityManager->getRepository(Product::class)->find($id);
+   // #[Route('product-update/{id}', name: 'product_update_item')]
+   // public function updateProduct(string $id): JsonResponse
+    //{
+       // /** @var Product $product */
+        /*$product = $this->entityManager->getRepository(Product::class)->find($id);
 
         if (!$product) {
             throw new Exception("Product with id " . $id . " not found");
@@ -112,19 +112,19 @@ class ProductController extends AbstractController
 
         $this->entityManager->flush();
 
-        return new JsonResponse($product);
-    }
+        return new JsonResponse($product);*/
+   // }
 
     /**
      * @param string $id
      * @return JsonResponse
      * @throws Exception
      */
-    #[Route('product-delete/{id}', name: 'product_delete_item')]
-    public function deleteProduct(string $id): JsonResponse
-    {
-        /** @var Product $product */
-        $product = $this->entityManager->getRepository(Product::class)->find($id);
+   // #[Route('product-delete/{id}', name: 'product_delete_item')]
+   // public function deleteProduct(string $id): JsonResponse
+   // {
+        // /** @var Product $product */
+        /*$product = $this->entityManager->getRepository(Product::class)->find($id);
 
         if (!$product) {
             throw new Exception("Product with id " . $id . " not found");
@@ -134,7 +134,7 @@ class ProductController extends AbstractController
 
         $this->entityManager->flush();
 
-        return new JsonResponse();
-    }
+        return new JsonResponse();*/
+    //}
 
 }
