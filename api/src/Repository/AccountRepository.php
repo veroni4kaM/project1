@@ -21,28 +21,26 @@ class AccountRepository extends ServiceEntityRepository
         parent::__construct($registry, Account::class);
     }
 
-//    /**
-//     * @return Account[] Returns an array of Account objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('a')
-//            ->andWhere('a.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('a.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * @param int $itemsPerPage
+     * @param int $page
+     * @param string|null $accountName
+     * @param string|null $userName
+     * @return float|int|mixed|string
+     */
+    public function getAllAccountByName(int $itemsPerPage, int $page, ?string $balance = null, ?string $userName = null)
+    {
+        return $this->createQueryBuilder("account")
+            ->select( 'account.account_number', 'account.balance')
 
-//    public function findOneBySomeField($value): ?Account
-//    {
-//        return $this->createQueryBuilder('a')
-//            ->andWhere('a.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+            //->andWhere("user.first_name LIKE :userName")
+
+            //->setParameter("balance","%". $balance. "%")
+
+            ->setFirstResult($itemsPerPage * ($page - 1))
+            ->setMaxResults($itemsPerPage)
+            ->orderBy('account.balance','ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

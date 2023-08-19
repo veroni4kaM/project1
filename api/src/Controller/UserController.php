@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-/*use App\Entity\Category;
-use App\Entity\Product;*/
+use App\Entity\Account;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,123 +18,121 @@ class UserController extends AbstractController
     /**
      * @var EntityManagerInterface
      */
-    //private EntityManagerInterface $entityManager;
+    private EntityManagerInterface $entityManager;
 
     /**
      * @param EntityManagerInterface $entityManager
      */
-    /*public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-    }*/
+    }
 
     /**
      * @param Request $request
      * @return JsonResponse
      * @throws Exception
      */
-    //#[Route('product-create', name: 'product_create')]
-    /*public function create(Request $request): JsonResponse
+    #[Route('user-create', name: 'user_create')]
+    public function create(Request $request): JsonResponse
     {
         $requestData = json_decode($request->getContent(), true);
 
         if (!isset(
-            $requestData['price'],
-            $requestData['name'],
-            $requestData['description'],
-            $requestData['category']
+            $requestData['first_name'],
+            $requestData['last_name'],
+            $requestData['email'],
+            $requestData['password'],
+            $requestData['registration_date']
         )) {
             throw new Exception("Invalid request data");
         }
-        $category = $this->entityManager->getRepository(Category::class)->find($requestData["category"]);
-        $product = new Product();
 
-        $product->setPrice($requestData['price']);
-        $product->setName($requestData['name']);
-        $product->setDescription($requestData['description']);
-        $product->setCategory($category);
+        $user = new User();
 
-        if(!$category){
-            throw new Exception("Category with this id not found");
-        }
+        $user->setFirstName($requestData['first_name']);
+        $user->setLastName($requestData['last_name']);
+        $user->setEmail($requestData['email']);
+        $user->setPassword($requestData['password']);
+        $user->setRegistrationDate($requestData['registration_date']);
 
-        $this->entityManager->persist($product);
+        $this->entityManager->persist($user);
 
         $this->entityManager->flush();
 
-        return new JsonResponse($product,Response::HTTP_CREATED);
-    }*/
+        return new JsonResponse($user, Response::HTTP_CREATED);
+    }
 
     /**
      * @return JsonResponse
      */
-    /*#[Route('product-all', name: 'product_all')]
+    #[Route('user-all', name: 'user_all')]
     public function getAll(): JsonResponse
     {
-        $products = $this->entityManager->getRepository(Product::class)->findBy();
+        $users = $this->entityManager->getRepository(User::class)->findAll();
 
-        return new JsonResponse($products);
-    }*/
-
-    /**
-     * @param string $id
-     * @return JsonResponse
-     * @throws Exception
-     */
-    //#[Route('product/{id}', name: 'product_get_item')]
-    //public function getItem(string $id): JsonResponse
-    //{
-        /*product = $this->entityManager->getRepository(Product::class)->find($id);
-
-        if (!$product) {
-            throw new Exception("Product with id " . $id . " not found");
-        }
-
-        return new JsonResponse($product);*/
-   // }
+        return new JsonResponse($users);
+    }
 
     /**
      * @param string $id
      * @return JsonResponse
      * @throws Exception
      */
-   // #[Route('product-update/{id}', name: 'product_update_item')]
-   // public function updateProduct(string $id): JsonResponse
-    //{
-       // /** @var Product $product */
-        /*$product = $this->entityManager->getRepository(Product::class)->find($id);
+    #[Route('user/{id}', name: 'user_get_item')]
+    public function getItem(string $id): JsonResponse
+    {
+    $user = $this->entityManager->getRepository(User::class)->find($id);
 
-        if (!$product) {
-            throw new Exception("Product with id " . $id . " not found");
+    if (!$user) {
+        throw new Exception("User with id " . $id . " not found");
+    }
+
+    return new JsonResponse($user);
+    }
+
+    /**
+     * @param string $id
+     * @return JsonResponse
+     * @throws Exception
+     */
+    #[Route('user-update/{id}', name: 'product_update_item')]
+    public function updateUser(string $id): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->entityManager->getRepository(User::class)->find($id);
+
+        if (!$user) {
+            throw new Exception("User with id " . $id . " not found");
         }
 
-        $product->setName("New name");
+        $user->setFirstName("Анатолій");
 
         $this->entityManager->flush();
 
-        return new JsonResponse($product);*/
-   // }
+        return new JsonResponse($user);
+    }
 
     /**
      * @param string $id
      * @return JsonResponse
      * @throws Exception
      */
-   // #[Route('product-delete/{id}', name: 'product_delete_item')]
-   // public function deleteProduct(string $id): JsonResponse
-   // {
-        // /** @var Product $product */
-        /*$product = $this->entityManager->getRepository(Product::class)->find($id);
+    #[Route('user-delete/{id}', name: 'user_delete_item')]
+    public function deleteUser(string $id): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->entityManager->getRepository(User::class)->find($id);
 
-        if (!$product) {
-            throw new Exception("Product with id " . $id . " not found");
+        if (!$user) {
+            throw new Exception("User with id " . $id . " not found");
         }
 
-        $this->entityManager->remove($product);
+        $this->entityManager->remove($user);
 
         $this->entityManager->flush();
 
-        return new JsonResponse();*/
-    //}
+        return new JsonResponse();
+    }
 
 }

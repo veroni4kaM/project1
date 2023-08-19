@@ -2,10 +2,11 @@
 
 namespace App\Controller;
 
-/*use App\Entity\Category;
-use App\Entity\Product;*/
+use App\Entity\Account;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Proxies\__CG__\App\Entity\Product;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,123 +19,134 @@ class AccountController extends AbstractController
     /**
      * @var EntityManagerInterface
      */
-    //private EntityManagerInterface $entityManager;
+    private EntityManagerInterface $entityManager;
 
     /**
      * @param EntityManagerInterface $entityManager
      */
-    /*public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-    }*/
+    }
 
     /**
      * @param Request $request
      * @return JsonResponse
      * @throws Exception
      */
-    //#[Route('product-create', name: 'product_create')]
-    /*public function create(Request $request): JsonResponse
+    #[Route('account-create', name: 'account_create')]
+    public function create(Request $request): JsonResponse
     {
         $requestData = json_decode($request->getContent(), true);
 
         if (!isset(
-            $requestData['price'],
-            $requestData['name'],
-            $requestData['description'],
-            $requestData['category']
+            $requestData['balance'],
+            $requestData['open_date'],
+            $requestData['account_number'],
+            $requestData['user']
         )) {
             throw new Exception("Invalid request data");
         }
-        $category = $this->entityManager->getRepository(Category::class)->find($requestData["category"]);
-        $product = new Product();
+        $user = $this->entityManager->getRepository(User::class)->find($requestData["user"]);
+        $account = new Account();
 
-        $product->setPrice($requestData['price']);
-        $product->setName($requestData['name']);
-        $product->setDescription($requestData['description']);
-        $product->setCategory($category);
+        $account->setBalance($requestData['balance']);
+        $account->setOpenDate($requestData['open_date']);
+        $account->setAccountNumber($requestData['account_number']);
+        $account->setUser($user);
 
-        if(!$category){
-            throw new Exception("Category with this id not found");
+        if(!$user){
+            throw new Exception("User with this id not found");
         }
 
-        $this->entityManager->persist($product);
+        $this->entityManager->persist($account);
 
         $this->entityManager->flush();
 
-        return new JsonResponse($product,Response::HTTP_CREATED);
-    }*/
+        return new JsonResponse($account,Response::HTTP_CREATED);
+    }
 
     /**
      * @return JsonResponse
      */
-    /*#[Route('product-all', name: 'product_all')]
+    #[Route('account-all', name: 'account_all')]
     public function getAll(): JsonResponse
     {
-        $products = $this->entityManager->getRepository(Product::class)->findBy();
+        $accounts = $this->entityManager->getRepository(Account::class)->findAll();
 
-        return new JsonResponse($products);
-    }*/
-
-    /**
-     * @param string $id
-     * @return JsonResponse
-     * @throws Exception
-     */
-    //#[Route('product/{id}', name: 'product_get_item')]
-    //public function getItem(string $id): JsonResponse
-    //{
-        /*product = $this->entityManager->getRepository(Product::class)->find($id);
-
-        if (!$product) {
-            throw new Exception("Product with id " . $id . " not found");
-        }
-
-        return new JsonResponse($product);*/
-   // }
+        return new JsonResponse($accounts);
+    }
 
     /**
      * @param string $id
      * @return JsonResponse
      * @throws Exception
      */
-   // #[Route('product-update/{id}', name: 'product_update_item')]
-   // public function updateProduct(string $id): JsonResponse
-    //{
-       // /** @var Product $product */
-        /*$product = $this->entityManager->getRepository(Product::class)->find($id);
+    #[Route('account/{id}', name: 'account_get_item')]
+    public function getItem(string $id): JsonResponse
+    {
+        $account = $this->entityManager->getRepository(Account::class)->find($id);
 
-        if (!$product) {
-            throw new Exception("Product with id " . $id . " not found");
+        if (!$account) {
+            throw new Exception("Account with id " . $id . " not found");
         }
 
-        $product->setName("New name");
+        return new JsonResponse($account);
+   }
+
+    /**
+     * @param string $id
+     * @return JsonResponse
+     * @throws Exception
+     */
+   #[Route('account-update/{id}', name: 'account_update_item')]
+   public function updateAccount(string $id): JsonResponse
+    {
+        /** @var Account $account */
+        $account = $this->entityManager->getRepository(Account::class)->find($id);
+
+        if (!$account) {
+            throw new Exception("Account with id " . $id . " not found");
+        }
+
+        $account->setBalance(10000);
+        $this->entityManager->flush();
+
+        return new JsonResponse($account);
+    }
+
+    /**
+     * @param string $id
+     * @return JsonResponse
+     * @throws Exception
+     */
+    #[Route('account-delete/{id}', name: 'account_delete_item')]
+    public function deleteAccount(string $id): JsonResponse
+   {
+         /** @var Account $account */
+        $account = $this->entityManager->getRepository(Account::class)->find($id);
+
+        if (!$account) {
+            throw new Exception("Account with id " . $id . " not found");
+        }
+
+        $this->entityManager->remove($account);
 
         $this->entityManager->flush();
 
-        return new JsonResponse($product);*/
-   // }
+        return new JsonResponse();
+    }
+    #[Route(path: "order", name: "app_ordering")]
+    public function ordering(Request $request): JsonResponse
+    {
+        $requestData = $request->query->all();
 
-    /**
-     * @param string $id
-     * @return JsonResponse
-     * @throws Exception
-     */
-   // #[Route('product-delete/{id}', name: 'product_delete_item')]
-   // public function deleteProduct(string $id): JsonResponse
-   // {
-        // /** @var Product $product */
-        /*$product = $this->entityManager->getRepository(Product::class)->find($id);
-
-        if (!$product) {
-            throw new Exception("Product with id " . $id . " not found");
-        }
-
-        $this->entityManager->remove($product);
-
-        $this->entityManager->flush();
-
-        return new JsonResponse();*/
-    //}
+        $accounts = $this->entityManager->getRepository(Account::class)->getAllAccountByName(
+            $requestData['itemsPerPage'] ?? 10,
+            $requestData['page'] ?? 1,
+            $requestData['balance'] ?? null
+        );
+        return new JsonResponse($accounts);
+    }
 
 }

@@ -3,12 +3,14 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-class User
+class User implements JsonSerializable
 {
     /**
      * @var int|null
@@ -53,12 +55,9 @@ class User
      */
     #[ORM\OneToMany(mappedBy: "user", targetEntity: Account::class)]
     private Collection $accounts;
-    /**
-     * @var Collection
-     */
-    #[ORM\OneToMany(mappedBy: "user", targetEntity: Recipient::class)]
-    private Collection $recipients;
-
+    public function __construct(){
+        $this->accounts=new ArrayCollection();
+    }
     /**
      * @return int|null
      */
@@ -79,7 +78,7 @@ class User
      * @param string $first_name
      * @return $this
      */
-    public function setFirstName(string $first_name): static
+    public function setFirstName(string $first_name): self
     {
         $this->first_name = $first_name;
 
@@ -98,7 +97,7 @@ class User
      * @param string $last_name
      * @return $this
      */
-    public function setLastName(string $last_name): static
+    public function setLastName(string $last_name): self
     {
         $this->last_name = $last_name;
 
@@ -117,7 +116,7 @@ class User
      * @param string $email
      * @return $this
      */
-    public function setEmail(string $email): static
+    public function setEmail(string $email): self
     {
         $this->email = $email;
 
@@ -136,7 +135,7 @@ class User
      * @param string $password
      * @return $this
      */
-    public function setPassword(string $password): static
+    public function setPassword(string $password): self
     {
         $this->password = $password;
 
@@ -155,7 +154,7 @@ class User
      * @param \DateTimeInterface $registration_date
      * @return $this
      */
-    public function setRegistrationDate(\DateTimeInterface $registration_date): static
+    public function setRegistrationDate(\DateTimeInterface $registration_date): self
     {
         $this->registration_date = $registration_date;
 
@@ -174,26 +173,22 @@ class User
      * @param Collection $accounts
      * @return void
      */
-    public function setAccounts(Collection $accounts): void
+    public function setAccounts(Collection $accounts): self
     {
         $this->accounts = $accounts;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getRecipients(): Collection
-    {
-        return $this->recipients;
-    }
-
-    /**
-     * @param Collection $recipients
-     * @return $this
-     */
-    public function setRecipients(Collection $recipients): self
-    {
-        $this->recipients = $recipients;
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+
+        return [
+            "id"=>$this->getId(),
+            "first_name"=>$this->getFirstName(),
+            "last_name"=>$this->getLastName(),
+            "email"=>$this->getEmail(),
+            "password"=>$this->getPassword(),
+            "registration_date"=>$this->getRegistrationDate()
+        ];
     }
 }
