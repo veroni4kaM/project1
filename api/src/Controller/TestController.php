@@ -31,11 +31,20 @@ class TestController extends AbstractController
     /**
      * @param Request $request
      * @return JsonResponse
+     * @throws Exception
      */
     #[Route(path: "test", name: "app_test")]
     public function test(Request $request): JsonResponse
     {
-        $products=$this->entityManager->getRepository(Product::class)->getAllProductByName("TV");
+        $requestData = $request->query->all();
+
+        $products = $this->entityManager->getRepository(Product::class)->getAllProductByName(
+            $requestData['itemsPerPage'] ?? 30,
+                $requestData['page'] ?? 1,
+                $requestData['categoryName'] ?? null,
+                $requestData['name'] ?? null
+
+        );
         return new JsonResponse($products);
     }
 

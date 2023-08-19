@@ -28,8 +28,8 @@ class Product implements JsonSerializable
     #[ORM\ManyToOne(targetEntity: Category::class,inversedBy: "product")]
     private ?Category $category = null;
 
-    #[ORM\OneToOne(targetEntity: ProductInfo::class)]
-    private ?ProductInfo $productInfo=null;
+/*    #[ORM\OneToOne(targetEntity: ProductInfo::class)]
+    private ?ProductInfo $productInfo=null;*/
     #[ORM\ManyToMany(targetEntity: Test::class)]
     private Collection $test;
     /**
@@ -107,7 +107,7 @@ class Product implements JsonSerializable
         $this->category = $category;
     }
 
-    public function getProductInfo(): ?ProductInfo
+/*    public function getProductInfo(): ?ProductInfo
     {
         return $this->productInfo;
     }
@@ -115,7 +115,7 @@ class Product implements JsonSerializable
     public function setProductInfo(?ProductInfo $productInfo): void
     {
         $this->productInfo = $productInfo;
-    }
+    }*/
 
 }
       

@@ -17,8 +17,8 @@ class ProductInfo implements JsonSerializable
 
     #[ORM\Column(length: 255)]
     private ?string $info = null;
-    #[ORM\OneToOne(mappedBy: "productInfo", targetEntity: Product::class)]
-    private Product $product;
+/*    #[ORM\OneToOne(mappedBy: "productInfo", targetEntity: Product::class)]
+    private Product $product;*/
     public function getInfo(): ?string
     {
         return $this->info;
@@ -51,7 +51,7 @@ class ProductInfo implements JsonSerializable
         $this->id = $id;
     }
 
-    public function getProduct(): Product
+/*    public function getProduct(): Product
     {
         return $this->product;
     }
@@ -59,6 +59,6 @@ class ProductInfo implements JsonSerializable
     public function setProduct(Product $product): void
     {
         $this->product = $product;
-    }
+    }*/
 }
       
