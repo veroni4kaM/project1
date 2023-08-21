@@ -28,7 +28,7 @@ class AccountRepository extends ServiceEntityRepository
      * @param string|null $userName
      * @return float|int|mixed|string
      */
-    public function getAllAccountByName(int $itemsPerPage, int $page, ?string $balance = null, ?string $userName = null)
+    public function getAllAccountByBalance(int $itemsPerPage, int $page, ?string $balance = null)
     {
         return $this->createQueryBuilder("account")
             ->select( 'account.account_number', 'account.balance')

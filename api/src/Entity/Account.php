@@ -122,6 +122,7 @@ class Account implements JsonSerializable
     public function jsonSerialize()
     {
         return [
+            "id"=>$this->getId(),
             "balance"=>$this->getBalance(),
             "open_data"=>$this->getOpenDate(),
             "account_number"=>$this->getAccountNumber(),

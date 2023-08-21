@@ -141,9 +141,9 @@ class AccountController extends AbstractController
     {
         $requestData = $request->query->all();
 
-        $accounts = $this->entityManager->getRepository(Account::class)->getAllAccountByName(
-            $requestData['itemsPerPage'] ?? 10,
-            $requestData['page'] ?? 1,
+        $accounts = $this->entityManager->getRepository(Account::class)->getAllAccountByBalance(
+            $requestData['itemsPerPage'],
+            $requestData['page'],
             $requestData['balance'] ?? null
         );
         return new JsonResponse($accounts);
