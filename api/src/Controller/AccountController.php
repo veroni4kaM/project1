@@ -38,6 +38,7 @@ class AccountController extends AbstractController
     public function create(Request $request): JsonResponse
     {
         $requestData = json_decode($request->getContent(), true);
+        $openDate = new \DateTime($requestData['open_date']);
 
         if (!isset(
             $requestData['balance'],
@@ -51,7 +52,7 @@ class AccountController extends AbstractController
         $account = new Account();
 
         $account->setBalance($requestData['balance']);
-        $account->setOpenDate($requestData['open_date']);
+        $account->setOpenDate($openDate);
         $account->setAccountNumber($requestData['account_number']);
         $account->setUser($user);
 
@@ -151,7 +152,8 @@ class AccountController extends AbstractController
             $requestData['page'] ?? 1,
             $requestData['balance'] ?? null,
             $requestData['account_number'] ?? null,
-            $requestData['open_date'] ?? null
+            $requestData['open_date'] ?? null,
+            $requestData['user_id'] ?? null
         );
         return new JsonResponse($accounts);
     }

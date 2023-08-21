@@ -16,15 +16,27 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class UserRepository extends ServiceEntityRepository
 {
+    /**
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, User::class);
     }
 
-    public function getFilteredUsers(int $itemsPerPage, int $page, ?string $firstName = null, ?string $lastName = null,?string $email = null, ?string $registrationDate = null)
+    /**
+     * @param int $itemsPerPage
+     * @param int $page
+     * @param string|null $firstName
+     * @param string|null $lastName
+     * @param string|null $email
+     * @param string|null $registrationDate
+     * @return float|int|mixed|string
+     */
+    public function getFilteredUsers(int $itemsPerPage, int $page, ?string $firstName = null, ?string $lastName = null, ?string $email = null, ?string $registrationDate = null)
     {
         return $this->createQueryBuilder("user")
-            ->select( 'user.id','user.first_name', 'user.last_name', 'user.email','user.registration_date')
+            ->select('user.id', 'user.first_name', 'user.last_name', 'user.email', 'user.registration_date')
 
             ->andWhere('user.first_name LIKE :firstName')
             ->andWhere('user.last_name LIKE :lastName')
@@ -39,7 +51,7 @@ class UserRepository extends ServiceEntityRepository
             ->setFirstResult($itemsPerPage * ($page - 1))
             ->setMaxResults($itemsPerPage)
 
-            ->orderBy('user.registration_date','DESC')
+            ->orderBy('user.registration_date', 'ASC')
             ->getQuery()
             ->getResult();
     }

@@ -36,7 +36,7 @@ class Account implements JsonSerializable
     /**
      * @var User|null
      */
-    #[ORM\ManyToOne(targetEntity: User::class,inversedBy: "account")]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: "account")]
     private ?User $user = null;
 
     public function getId(): ?int
@@ -119,14 +119,17 @@ class Account implements JsonSerializable
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function jsonSerialize()
     {
         return [
-            "id"=>$this->getId(),
-            "balance"=>$this->getBalance(),
-            "open_data"=>$this->getOpenDate(),
-            "account_number"=>$this->getAccountNumber(),
-            "user"=>$this->getUser()
+            "id" => $this->getId(),
+            "balance" => $this->getBalance(),
+            "open_data" => $this->getOpenDate(),
+            "account_number" => $this->getAccountNumber(),
+            "user" => $this->getUser()
         ];
     }
 }

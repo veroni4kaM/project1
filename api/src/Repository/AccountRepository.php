@@ -16,6 +16,9 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class AccountRepository extends ServiceEntityRepository
 {
+    /**
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Account::class);
@@ -28,23 +31,30 @@ class AccountRepository extends ServiceEntityRepository
      * @param string|null $userName
      * @return float|int|mixed|string
      */
-    public function getFilteredAccounts(int $itemsPerPage, int $page, ?string $balance = null, ?string $accountNumber = null, ?string $openDate = null)
+    public function getFilteredAccounts(int $itemsPerPage, int $page, ?string $balance = null, ?string $accountNumber = null, ?string $openDate = null,  ?string $user = null)
     {
         return $this->createQueryBuilder("account")
-            ->select( 'account.id','account.account_number', 'account.balance', 'account.open_date')
+            ->select('account.id', 'account.account_number', 'account.balance', 'account.open_date')
+            ->join("account.user","user")
 
             ->andWhere('account.account_number LIKE :accountNumber')
             ->andWhere('account.balance LIKE :balance')
             ->andWhere('account.open_date LIKE :openDate')
+            //->andWhere('account.user LIKE :user')
+
+                ->andWhere("account.user_id LIKE :user ")
+            ->setParameter("user", "%". $user ."%")
 
             ->setParameter('accountNumber', '%' . $accountNumber . '%')
             ->setParameter('balance', '%' . $balance . '%')
             ->setParameter('openDate', '%' . $openDate . '%')
+            //->setParameter('user', '%' . $user . '%')
+
 
             ->setFirstResult($itemsPerPage * ($page - 1))
             ->setMaxResults($itemsPerPage)
 
-            ->orderBy('account.open_date','DESC')
+            ->orderBy('account.open_date', 'ASC')
             ->getQuery()
             ->getResult();
     }

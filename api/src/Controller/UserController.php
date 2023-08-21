@@ -37,6 +37,7 @@ class UserController extends AbstractController
     public function create(Request $request): JsonResponse
     {
         $requestData = json_decode($request->getContent(), true);
+        $registrationDate = new \DateTime($requestData['registration_date']);
 
         if (!isset(
             $requestData['first_name'],
@@ -54,7 +55,7 @@ class UserController extends AbstractController
         $user->setLastName($requestData['last_name']);
         $user->setEmail($requestData['email']);
         $user->setPassword($requestData['password']);
-        $user->setRegistrationDate($requestData['registration_date']);
+        $user->setRegistrationDate($registrationDate);
 
         $this->entityManager->persist($user);
 

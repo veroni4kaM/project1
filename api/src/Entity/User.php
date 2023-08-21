@@ -55,9 +55,12 @@ class User implements JsonSerializable
      */
     #[ORM\OneToMany(mappedBy: "user", targetEntity: Account::class)]
     private Collection $accounts;
-    public function __construct(){
-        $this->accounts=new ArrayCollection();
+
+    public function __construct()
+    {
+        $this->accounts = new ArrayCollection();
     }
+
     /**
      * @return int|null
      */
@@ -179,16 +182,19 @@ class User implements JsonSerializable
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function jsonSerialize()
     {
 
         return [
-            "id"=>$this->getId(),
-            "first_name"=>$this->getFirstName(),
-            "last_name"=>$this->getLastName(),
-            "email"=>$this->getEmail(),
-            "password"=>$this->getPassword(),
-            "registration_date"=>$this->getRegistrationDate()
+            "id" => $this->getId(),
+            "first_name" => $this->getFirstName(),
+            "last_name" => $this->getLastName(),
+            "email" => $this->getEmail(),
+            "password" => $this->getPassword(),
+            "registration_date" => $this->getRegistrationDate()
         ];
     }
 }
