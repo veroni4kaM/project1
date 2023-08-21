@@ -28,18 +28,23 @@ class AccountRepository extends ServiceEntityRepository
      * @param string|null $userName
      * @return float|int|mixed|string
      */
-    public function getAllAccountByBalance(int $itemsPerPage, int $page, ?string $balance = null)
+    public function getFilteredAccounts(int $itemsPerPage, int $page, ?string $balance = null, ?string $accountNumber = null, ?string $openDate = null)
     {
         return $this->createQueryBuilder("account")
-            ->select( 'account.account_number', 'account.balance')
+            ->select( 'account.id','account.account_number', 'account.balance', 'account.open_date')
 
-            //->andWhere("user.first_name LIKE :userName")
+            ->andWhere('account.account_number LIKE :accountNumber')
+            ->andWhere('account.balance LIKE :balance')
+            ->andWhere('account.open_date LIKE :openDate')
 
-            //->setParameter("balance","%". $balance. "%")
+            ->setParameter('accountNumber', '%' . $accountNumber . '%')
+            ->setParameter('balance', '%' . $balance . '%')
+            ->setParameter('openDate', '%' . $openDate . '%')
 
             ->setFirstResult($itemsPerPage * ($page - 1))
             ->setMaxResults($itemsPerPage)
-            ->orderBy('account.balance','ASC')
+
+            ->orderBy('account.open_date','DESC')
             ->getQuery()
             ->getResult();
     }

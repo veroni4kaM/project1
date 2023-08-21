@@ -136,15 +136,22 @@ class AccountController extends AbstractController
 
         return new JsonResponse();
     }
-    #[Route(path: "order", name: "app_ordering")]
-    public function ordering(Request $request): JsonResponse
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    #[Route(path: "filter-accounts", name: "app_filter_accounts")]
+    public function filterAccounts(Request $request): JsonResponse
     {
         $requestData = $request->query->all();
 
-        $accounts = $this->entityManager->getRepository(Account::class)->getAllAccountByBalance(
-            $requestData['itemsPerPage'],
-            $requestData['page'],
-            $requestData['balance'] ?? null
+        $accounts = $this->entityManager->getRepository(Account::class)->getFilteredAccounts(
+            $requestData['itemsPerPage'] ?? 10,
+            $requestData['page'] ?? 1,
+            $requestData['balance'] ?? null,
+            $requestData['account_number'] ?? null,
+            $requestData['open_date'] ?? null
         );
         return new JsonResponse($accounts);
     }

@@ -82,13 +82,13 @@ class UserController extends AbstractController
     #[Route('user/{id}', name: 'user_get_item')]
     public function getItem(string $id): JsonResponse
     {
-    $user = $this->entityManager->getRepository(User::class)->find($id);
+        $user = $this->entityManager->getRepository(User::class)->find($id);
 
-    if (!$user) {
-        throw new Exception("User with id " . $id . " not found");
-    }
+        if (!$user) {
+            throw new Exception("User with id " . $id . " not found");
+        }
 
-    return new JsonResponse($user);
+        return new JsonResponse($user);
     }
 
     /**
@@ -133,6 +133,26 @@ class UserController extends AbstractController
         $this->entityManager->flush();
 
         return new JsonResponse();
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    #[Route(path: "filter-users", name: "app_filter_users")]
+    public function filterUsers(Request $request): JsonResponse
+    {
+        $requestData = $request->query->all();
+
+        $accounts = $this->entityManager->getRepository(User::class)->getFilteredUsers(
+            $requestData['itemsPerPage'] ?? 10,
+            $requestData['page'] ?? 1,
+            $requestData['first_name'] ?? null,
+            $requestData['last_name'] ?? null,
+            $requestData['email'] ?? null,
+            $requestData['registration_date'] ?? null
+        );
+        return new JsonResponse($accounts);
     }
 
 }

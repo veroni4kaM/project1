@@ -21,28 +21,26 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
-//    /**
-//     * @return User[] Returns an array of User objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('u.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function getFilteredUsers(int $itemsPerPage, int $page, ?string $firstName = null, ?string $lastName = null,?string $email = null, ?string $registrationDate = null)
+    {
+        return $this->createQueryBuilder("user")
+            ->select( 'user.id','user.first_name', 'user.last_name', 'user.email','user.registration_date')
 
-//    public function findOneBySomeField($value): ?User
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+            ->andWhere('user.first_name LIKE :firstName')
+            ->andWhere('user.last_name LIKE :lastName')
+            ->andWhere('user.email LIKE :email')
+            ->andWhere('user.registration_date LIKE :registrationDate')
+
+            ->setParameter('firstName', '%' . $firstName . '%')
+            ->setParameter('lastName', '%' . $lastName . '%')
+            ->setParameter('email', '%' . $email . '%')
+            ->setParameter('registrationDate', '%' . $registrationDate . '%')
+
+            ->setFirstResult($itemsPerPage * ($page - 1))
+            ->setMaxResults($itemsPerPage)
+
+            ->orderBy('user.registration_date','DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }
