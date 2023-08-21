@@ -4,17 +4,18 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Entity\Product;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class TestController extends AbstractController
 {
-
     /**
      * @var EntityManagerInterface
      */
@@ -23,8 +24,11 @@ class TestController extends AbstractController
     /**
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    private UserPasswordHasherInterface $passwordHasher;
+
+    public function __construct(UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager)
     {
+        $this->passwordHasher = $passwordHasher;
         $this->entityManager = $entityManager;
     }
 
@@ -36,16 +40,18 @@ class TestController extends AbstractController
     #[Route(path: "test", name: "app_test")]
     public function test(Request $request): JsonResponse
     {
-        $requestData = $request->query->all();
 
-        $products = $this->entityManager->getRepository(Product::class)->getAllProductByName(
-            $requestData['itemsPerPage'] ?? 30,
-                $requestData['page'] ?? 1,
-                $requestData['categoryName'] ?? null,
-                $requestData['name'] ?? null
+        $user = new User();
 
-        );
-        return new JsonResponse($products);
+        $pass = "passw1223";
+        $user->setEmail("email1@gmail.com");
+
+        $hashedPassword = $this->passwordHasher->hashPassword($user, $pass);
+
+        $user->setPassword($hashedPassword);
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        return new JsonResponse();
     }
 
 
