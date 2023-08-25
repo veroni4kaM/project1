@@ -7,6 +7,7 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Proxies\__CG__\App\Entity\Product;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,6 +36,7 @@ class AccountController extends AbstractController
      * @throws Exception
      */
     #[Route('account-create', name: 'account_create')]
+    #[IsGranted('ROLE_ADMIN')]
     public function create(Request $request): JsonResponse
     {
         $requestData = json_decode($request->getContent(), true);
@@ -71,6 +73,7 @@ class AccountController extends AbstractController
      * @return JsonResponse
      */
     #[Route('account-all', name: 'account_all')]
+    #[IsGranted('ROLE_USER','ROLE_ADMIN')]
     public function getAll(): JsonResponse
     {
         $accounts = $this->entityManager->getRepository(Account::class)->findAll();
@@ -84,6 +87,7 @@ class AccountController extends AbstractController
      * @throws Exception
      */
     #[Route('account/{id}', name: 'account_get_item')]
+    #[IsGranted('ROLE_USER','ROLE_ADMIN')]
     public function getItem(string $id): JsonResponse
     {
         $account = $this->entityManager->getRepository(Account::class)->find($id);
@@ -101,6 +105,7 @@ class AccountController extends AbstractController
      * @throws Exception
      */
    #[Route('account-update/{id}', name: 'account_update_item')]
+   #[IsGranted('ROLE_ADMIN')]
    public function updateAccount(string $id): JsonResponse
     {
         /** @var Account $account */
@@ -122,6 +127,7 @@ class AccountController extends AbstractController
      * @throws Exception
      */
     #[Route('account-delete/{id}', name: 'account_delete_item')]
+    #[IsGranted('ROLE_ADMIN')]
     public function deleteAccount(string $id): JsonResponse
    {
          /** @var Account $account */
@@ -143,6 +149,7 @@ class AccountController extends AbstractController
      * @return JsonResponse
      */
     #[Route(path: "filter-accounts", name: "app_filter_accounts")]
+    #[IsGranted('ROLE_USER','ROLE_ADMIN')]
     public function filterAccounts(Request $request): JsonResponse
     {
         $requestData = $request->query->all();

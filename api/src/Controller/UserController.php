@@ -11,6 +11,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+
+
 
 class UserController extends AbstractController
 {
@@ -33,6 +36,7 @@ class UserController extends AbstractController
      * @return JsonResponse
      * @throws Exception
      */
+    #[IsGranted('ROLE_ADMIN')]
     #[Route('user-create', name: 'user_create')]
     public function create(Request $request): JsonResponse
     {
@@ -81,6 +85,7 @@ class UserController extends AbstractController
      * @throws Exception
      */
     #[Route('user/{id}', name: 'user_get_item')]
+    #[IsGranted('ROLE_USER','ROLE_ADMIN')]
     public function getItem(string $id): JsonResponse
     {
         $user = $this->entityManager->getRepository(User::class)->find($id);
@@ -98,6 +103,7 @@ class UserController extends AbstractController
      * @throws Exception
      */
     #[Route('user-update/{id}', name: 'product_update_item')]
+    #[IsGranted('ROLE_ADMIN')]
     public function updateUser(string $id): JsonResponse
     {
         /** @var User $user */
@@ -120,6 +126,7 @@ class UserController extends AbstractController
      * @throws Exception
      */
     #[Route('user-delete/{id}', name: 'user_delete_item')]
+    #[IsGranted('ROLE_ADMIN')]
     public function deleteUser(string $id): JsonResponse
     {
         /** @var User $user */
@@ -140,6 +147,7 @@ class UserController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
+    #[IsGranted('ROLE_USER','ROLE_ADMIN')]
     #[Route(path: "filter-users", name: "app_filter_users")]
     public function filterUsers(Request $request): JsonResponse
     {

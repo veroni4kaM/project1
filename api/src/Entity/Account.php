@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\AccountRepository;
+use DateTimeInterface;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
@@ -22,22 +24,29 @@ class Account implements JsonSerializable
     private ?string $balance = null;
 
     /**
-     * @var \DateTimeInterface|null
+     * @var DateTimeInterface|null
      */
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $open_date = null;
+    private ?DateTimeInterface $openDate = null;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: Types::DECIMAL, precision: 16, scale: '0')]
-    private ?string $account_number = null;
+    private ?string $accountNumber = null;
 
     /**
      * @var User|null
      */
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: "account")]
     private ?User $user = null;
+
+    /**
+     * @var Collection
+     */
+    #[ORM\OneToMany(mappedBy: "account", targetEntity: Transaction::class)]
+    private Collection $transactions;
+
 
     public function getId(): ?int
     {
@@ -64,20 +73,21 @@ class Account implements JsonSerializable
     }
 
     /**
-     * @return \DateTimeInterface|null
+     * @return DateTimeInterface|null
      */
-    public function getOpenDate(): ?\DateTimeInterface
+    public function getOpenDate(): ?DateTimeInterface
     {
-        return $this->open_date;
+        return $this->openDate;
     }
 
+
     /**
-     * @param \DateTimeInterface $open_date
+     * @param DateTimeInterface $openDate
      * @return $this
      */
-    public function setOpenDate(\DateTimeInterface $open_date): self
+    public function setOpenDate(DateTimeInterface $openDate): self
     {
-        $this->open_date = $open_date;
+        $this->openDate = $openDate;
 
         return $this;
     }
@@ -87,16 +97,17 @@ class Account implements JsonSerializable
      */
     public function getAccountNumber(): ?string
     {
-        return $this->account_number;
+        return $this->accountNumber;
     }
 
+
     /**
-     * @param string $account_number
+     * @param string $accountNumber
      * @return $this
      */
-    public function setAccountNumber(string $account_number): self
+    public function setAccountNumber(string $accountNumber): self
     {
-        $this->account_number = $account_number;
+        $this->accountNumber = $accountNumber;
 
         return $this;
     }
@@ -131,5 +142,23 @@ class Account implements JsonSerializable
             "account_number" => $this->getAccountNumber(),
             "user" => $this->getUser()
         ];
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getTransactions(): Collection
+    {
+        return $this->transactions;
+    }
+
+    /**
+     * @param Collection $transactions
+     * @return $this
+     */
+    public function setTransactions(Collection $transactions): self
+    {
+        $this->transactions = $transactions;
+        return $this;
     }
 }

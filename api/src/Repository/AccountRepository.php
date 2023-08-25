@@ -24,14 +24,17 @@ class AccountRepository extends ServiceEntityRepository
         parent::__construct($registry, Account::class);
     }
 
+
     /**
      * @param int $itemsPerPage
      * @param int $page
-     * @param string|null $accountName
-     * @param string|null $userName
+     * @param string|null $balance
+     * @param string|null $accountNumber
+     * @param string|null $openDate
+     * @param string|null $user
      * @return float|int|mixed|string
      */
-    public function getFilteredAccounts(int $itemsPerPage, int $page, ?string $balance = null, ?string $accountNumber = null, ?string $openDate = null,  ?string $user = null)
+    public function getFilteredAccounts(int $itemsPerPage, int $page, ?string $balance = null, ?string $accountNumber = null, ?string $openDate = null, ?string $user = null)
     {
         return $this->createQueryBuilder("account")
             ->select('account.id', 'account.account_number', 'account.balance', 'account.open_date')

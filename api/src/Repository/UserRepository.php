@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 /**
  * @extends ServiceEntityRepository<User>
@@ -33,7 +35,7 @@ class UserRepository extends ServiceEntityRepository
      * @param string|null $registrationDate
      * @return float|int|mixed|string
      */
-    public function getFilteredUsers(int $itemsPerPage, int $page, ?string $firstName = null, ?string $lastName = null, ?string $email = null, ?string $registrationDate = null)
+    public function getFilteredUsers(int $itemsPerPage, int $page, ?string $firstName = null, ?string $lastName = null, ?string $email = null, ?string $registrationDate = null): mixed
     {
         return $this->createQueryBuilder("user")
             ->select('user.id', 'user.first_name', 'user.last_name', 'user.email', 'user.registration_date')
@@ -54,5 +56,15 @@ class UserRepository extends ServiceEntityRepository
             ->orderBy('user.registration_date', 'ASC')
             ->getQuery()
             ->getResult();
+    }
+    public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
+    {
+        if (!$user instanceof User) {
+            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', $user::class));
+        }
+
+        $user->setPassword($newHashedPassword);
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
     }
 }
