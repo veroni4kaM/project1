@@ -42,7 +42,7 @@ class TestController extends AbstractController
 
         $accounts = $this->entityManager->getRepository(Account::class)->findAll();
 
-        if (in_array(Users::ROLE_ADMIN, $user->getRoles())) {
+        if (in_array(User::ROLE_ADMIN, $user->getRoles())) {
             return new JsonResponse($accounts);
         }
 

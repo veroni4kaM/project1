@@ -8,8 +8,11 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
+use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator\Constraints\AccountConstraint;
 
 #[ORM\Entity(repositoryClass: AccountRepository::class)]
+#[AccountConstraint]
 class Account implements JsonSerializable
 {
     #[ORM\Id]
@@ -19,21 +22,35 @@ class Account implements JsonSerializable
 
     /**
      * @var string|null
+     * @Assert\Regex(pattern="/^\d+(\.\d{1,2})?$/",message="Balance must be a valid decimal number with up to 2 decimal places."
+     *  )
      */
     #[ORM\Column(type: Types::DECIMAL, precision: 15, scale: 2)]
+    #[Assert\NotBlank]
+    #[AccountConstraint]
     private ?string $balance = null;
 
     /**
      * @var DateTimeInterface|null
+     * @Assert\NotBlank (message="Open date cannot be blank.")
      */
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\NotBlank]
     private ?DateTimeInterface $openDate = null;
 
     /**
      * @var string|null
+     * @Assert\Length(
+     *      min=1,
+     *      max=16,
+     *      minMessage="Account number must be at least {{ limit }} characters long.",
+     *      maxMessage="Account number cannot be longer than {{ limit }} characters."
+     *  )
      */
     #[ORM\Column(type: Types::DECIMAL, precision: 16, scale: '0')]
+    #[Assert\NotBlank]
     private ?string $accountNumber = null;
+
 
     /**
      * @var User|null
@@ -48,6 +65,9 @@ class Account implements JsonSerializable
     private Collection $transactions;
 
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
@@ -112,23 +132,6 @@ class Account implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @return User|null
-     */
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    /**
-     * @param User|null $user
-     * @return $this
-     */
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
-        return $this;
-    }
 
     /**
      * @return array
@@ -159,6 +162,17 @@ class Account implements JsonSerializable
     public function setTransactions(Collection $transactions): self
     {
         $this->transactions = $transactions;
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
         return $this;
     }
 }

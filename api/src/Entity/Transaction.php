@@ -7,6 +7,8 @@ use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 #[ORM\Entity(repositoryClass: TransactionRepository::class)]
 class Transaction implements JsonSerializable
@@ -21,20 +23,26 @@ class Transaction implements JsonSerializable
 
     /**
      * @var string|null
+     * @Assert\Regex(
+     *      pattern="/^\d+(\.\d{1,2})?$/",
+     *      message="Amount must be a valid decimal number with up to 2 decimal places.")
      */
     #[ORM\Column(type: Types::DECIMAL, precision: 20, scale: 2)]
+    #[Assert\NotBlank]
     private ?string $amount = null;
 
     /**
      * @var DateTimeInterface|null
      */
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\NotBlank]
     private ?DateTimeInterface $transactionDate = null;
 
     /**
      * @var bool|null
      */
     #[ORM\Column]
+    #[Assert\NotNull]
     private ?bool $isDeposit = null;
 
     /**
@@ -88,7 +96,6 @@ class Transaction implements JsonSerializable
 
         return $this;
     }
-
 
 
     /**

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Account;
 use App\Entity\User;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Proxies\__CG__\App\Entity\Product;
@@ -40,7 +41,7 @@ class AccountController extends AbstractController
     public function create(Request $request): JsonResponse
     {
         $requestData = json_decode($request->getContent(), true);
-        $openDate = new \DateTime($requestData['open_date']);
+        $openDate = new DateTime($requestData['open_date']);
 
         if (!isset(
             $requestData['balance'],
@@ -58,22 +59,22 @@ class AccountController extends AbstractController
         $account->setAccountNumber($requestData['account_number']);
         $account->setUser($user);
 
-        if(!$user){
-            throw new Exception("User with this id not found");
+        if (!$user) {
+            throw new Exception("Users with this id not found");
         }
 
         $this->entityManager->persist($account);
 
         $this->entityManager->flush();
 
-        return new JsonResponse($account,Response::HTTP_CREATED);
+        return new JsonResponse($account, Response::HTTP_CREATED);
     }
 
     /**
      * @return JsonResponse
      */
+    #[IsGranted('IS_AUTHENTICATED_ANONYMOUSLY')]
     #[Route('account-all', name: 'account_all')]
-    #[IsGranted('ROLE_USER','ROLE_ADMIN')]
     public function getAll(): JsonResponse
     {
         $accounts = $this->entityManager->getRepository(Account::class)->findAll();
@@ -87,7 +88,6 @@ class AccountController extends AbstractController
      * @throws Exception
      */
     #[Route('account/{id}', name: 'account_get_item')]
-    #[IsGranted('ROLE_USER','ROLE_ADMIN')]
     public function getItem(string $id): JsonResponse
     {
         $account = $this->entityManager->getRepository(Account::class)->find($id);
@@ -97,16 +97,16 @@ class AccountController extends AbstractController
         }
 
         return new JsonResponse($account);
-   }
+    }
 
     /**
      * @param string $id
      * @return JsonResponse
      * @throws Exception
      */
-   #[Route('account-update/{id}', name: 'account_update_item')]
-   #[IsGranted('ROLE_ADMIN')]
-   public function updateAccount(string $id): JsonResponse
+    #[Route('account-update/{id}', name: 'account_update_item')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function updateAccount(string $id, Request $request): JsonResponse
     {
         /** @var Account $account */
         $account = $this->entityManager->getRepository(Account::class)->find($id);
@@ -115,7 +115,20 @@ class AccountController extends AbstractController
             throw new Exception("Account with id " . $id . " not found");
         }
 
-        $account->setBalance(10000);
+        $requestData = json_decode($request->getContent(), true);
+
+        // Перевірте наявність даних та оновіть поля об'єкта Account відповідно
+        if (isset($requestData['balance'])) {
+            $account->setBalance($requestData['balance']);
+        }
+
+        if (isset($requestData['open_date'])) {
+            $account->setOpenDate(new DateTime($requestData['open_date']));
+        }
+
+        if (isset($requestData['account_number'])) {
+            $account->setAccountNumber($requestData['account_number']);
+        }
         $this->entityManager->flush();
 
         return new JsonResponse($account);
@@ -129,8 +142,8 @@ class AccountController extends AbstractController
     #[Route('account-delete/{id}', name: 'account_delete_item')]
     #[IsGranted('ROLE_ADMIN')]
     public function deleteAccount(string $id): JsonResponse
-   {
-         /** @var Account $account */
+    {
+        /** @var Account $account */
         $account = $this->entityManager->getRepository(Account::class)->find($id);
 
         if (!$account) {
@@ -149,7 +162,7 @@ class AccountController extends AbstractController
      * @return JsonResponse
      */
     #[Route(path: "filter-accounts", name: "app_filter_accounts")]
-    #[IsGranted('ROLE_USER','ROLE_ADMIN')]
+    #[IsGranted('ROLE_USER', 'ROLE_ADMIN')]
     public function filterAccounts(Request $request): JsonResponse
     {
         $requestData = $request->query->all();

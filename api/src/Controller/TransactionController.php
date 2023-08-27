@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class TransactionController extends AbstractController
 {
@@ -61,14 +62,17 @@ class TransactionController extends AbstractController
             $this->entityManager->persist($transaction);
             $this->entityManager->flush();
         }
-
-        return new JsonResponse($transaction, Response::HTTP_CREATED);
+        if ($this->isTransactionAccessibleByUser($transaction)) {
+            return new JsonResponse($transaction, Response::HTTP_CREATED);
+        } else {
+            throw new Exception("Access denied.");
+        }
     }
 
     /**
      * @return JsonResponse
      */
-
+    #[IsGranted('IS_AUTHENTICATED_ANONYMOUSLY')]
     #[Route('transaction-all', name: 'transaction_all')]
     public function getAll(): JsonResponse
     {
@@ -81,7 +85,7 @@ class TransactionController extends AbstractController
      * @throws Exception
      */
     #[Route('transaction/{id}', name: 'transaction_get_item')]
-    #[IsGranted('ROLE_USER', 'ROLE_ADMIN')]
+    #[IsGranted('ROLE_USER')]
     public function getItem(string $id): JsonResponse
     {
         $transaction = $this->entityManager->getRepository(Transaction::class)->find($id);
@@ -89,8 +93,11 @@ class TransactionController extends AbstractController
         if (!$transaction) {
             throw new Exception("Transaction with id " . $id . " not found");
         }
-
-        return new JsonResponse($transaction);
+        if ($this->isTransactionAccessibleByUser($transaction)) {
+            return new JsonResponse($transaction);
+        } else {
+            throw new Exception("Access denied.");
+        }
     }
 
     /**
@@ -98,7 +105,7 @@ class TransactionController extends AbstractController
      */
     #[Route('transaction-update/{id}', name: 'transaction_update_item')]
     #[IsGranted('ROLE_USER')]
-    public function updateTransaction(string $id): JsonResponse
+    public function updateTransaction(string $id, Request $request): JsonResponse
     {
         /** @var Transaction $transaction */
 
@@ -107,12 +114,27 @@ class TransactionController extends AbstractController
         if (!$transaction) {
             throw new Exception("Transaction with id " . $id . " not found");
         }
-        // Перевірка, чи поточний користувач є власником транзакції
-        if ($this->getUser() === $transaction->getAccount()) {
-            $this->entityManager->flush();
+        $requestData = json_decode($request->getContent(), true);
+
+        if (isset($requestData['amount'])) {
+            $transaction->setAmount($requestData['amount']);
         }
 
-        return new JsonResponse($transaction);
+        if (isset($requestData['transaction_date'])) {
+            $transaction->setTransactionDate(new \DateTime($requestData['transaction_date']));
+        }
+
+        if (isset($requestData['is_deposit'])) {
+            $transaction->setIsDeposit($requestData['is_deposit']);
+        }
+        $this->entityManager->flush();
+
+
+        if ($this->isTransactionAccessibleByUser($transaction)) {
+            return new JsonResponse($transaction);
+        } else {
+            throw new Exception("Access denied.");
+        }
     }
 
     #[Route('transaction-delete/{id}', name: 'transaction_delete_item')]
@@ -131,7 +153,11 @@ class TransactionController extends AbstractController
             $this->entityManager->flush();
         }
 
-        return new JsonResponse();
+        if ($this->isTransactionAccessibleByUser($transaction)) {
+            return new JsonResponse();
+        } else {
+            throw new Exception("Access denied.");
+        }
     }
 
     #[Route(path: "filter-transactions", name: "app_filter_transactions")]
@@ -150,6 +176,11 @@ class TransactionController extends AbstractController
         );
 
         return new JsonResponse($transactions);
+    }
+    // Перевірка, чи користувач має доступ до цієї транзакції
+    private function isTransactionAccessibleByUser(Transaction $transaction): bool
+    {
+        return ($this->getUser() === $transaction->getAccount()->getUser());
     }
 
 }
