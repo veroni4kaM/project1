@@ -7,7 +7,6 @@ use App\Entity\User;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use Proxies\__CG__\App\Entity\Product;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -23,9 +22,14 @@ class UserController extends AbstractController
      * @var EntityManagerInterface
      */
     private EntityManagerInterface $entityManager;
+    /**
+     * @var Security
+     */
     private Security $security;
+
     /**
      * @param EntityManagerInterface $entityManager
+     * @param Security $security
      */
     public function __construct(EntityManagerInterface $entityManager, Security $security)
     {
@@ -117,8 +121,6 @@ class UserController extends AbstractController
         }
 
         $requestData = json_decode($request->getContent(), true);
-
-        // Перевірте наявність даних та оновіть поля об'єкта User відповідно
         if (isset($requestData['first_name'])) {
             $user->setFirstName($requestData['first_name']);
         }

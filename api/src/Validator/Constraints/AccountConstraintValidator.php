@@ -38,11 +38,11 @@ class AccountConstraintValidator extends ConstraintValidator
         if (($value->getBalance()) <= 0) {
             $this->context->addViolation("Balance cannot be less than 0.");
         }
+
         if (empty($value->getAccountNumber())) {
             $this->context->addViolation("Account number is empty");
         }
 
-        // Визначте, скільки рахунків користувач вже створив
         $user = $value->getUser();
         $accountRepository = $this->entityManager->getRepository(Account::class);
         $accountCount = $accountRepository->count(['user' => $user]);
@@ -50,7 +50,7 @@ class AccountConstraintValidator extends ConstraintValidator
         if ($accountCount >= 3) {
             $this->context->addViolation("User cannot have more than 3 accounts.");
         }
-        // Перевірте, чи існує рахунок з таким же номером
+
         $accountRepository = $this->entityManager->getRepository(Account::class);
         $existingAccount = $accountRepository->findOneBy(['accountNumber' => $value]);
 

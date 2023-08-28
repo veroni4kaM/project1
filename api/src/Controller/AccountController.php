@@ -34,7 +34,7 @@ class AccountController extends AbstractController
      * @param EntityManagerInterface $entityManager
      * @param ValidatorInterface $validator
      */
-    public function __construct(EntityManagerInterface $entityManager,         ValidatorInterface     $validator
+    public function __construct(EntityManagerInterface $entityManager, ValidatorInterface $validator
     )
     {
         $this->entityManager = $entityManager;
@@ -70,7 +70,7 @@ class AccountController extends AbstractController
         $account->setUser($user);
         $errors = $this->validator->validate($account);
         if (count($errors) > 0) {
-            return new JsonResponse((string) $errors);
+            return new JsonResponse((string)$errors);
         }
         if (!$user) {
             throw new Exception("Users with this id not found");
@@ -145,7 +145,7 @@ class AccountController extends AbstractController
         }
         $errors = $this->validator->validate($account);
         if (count($errors) > 0) {
-            return new JsonResponse((string) $errors);
+            return new JsonResponse((string)$errors);
         }
         $this->entityManager->flush();
 

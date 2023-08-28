@@ -7,12 +7,12 @@ use Symfony\Component\Validator\Constraint;
 /**
  * @Annotation
  */
-#[\Attribute]class AccountConstraint extends Constraint
+#[\Attribute] class AccountConstraint extends Constraint
 {
     /**
      * @return string
      */
-    public function validatedBy() : string
+    public function validatedBy(): string
     {
         return get_class($this) . "Validator";
     }
@@ -23,4 +23,5 @@ use Symfony\Component\Validator\Constraint;
     public function getTargets(): array|string
     {
         return self::CLASS_CONSTRAINT;
-    }}
+    }
+}
