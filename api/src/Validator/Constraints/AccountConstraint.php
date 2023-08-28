@@ -3,12 +3,11 @@
 namespace App\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
-use Doctrine\Common\Annotations\Annotation\Attribute;
 
 /**
  * @Annotation
  */
-#[\Attribute] class AccountConstraint extends Constraint
+#[\Attribute]class AccountConstraint extends Constraint
 {
     /**
      * @return string

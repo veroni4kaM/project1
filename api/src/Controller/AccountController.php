@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AccountController extends AbstractController
 {
@@ -24,11 +25,20 @@ class AccountController extends AbstractController
     private EntityManagerInterface $entityManager;
 
     /**
-     * @param EntityManagerInterface $entityManager
+     * @var ValidatorInterface
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    private ValidatorInterface $validator;
+
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param ValidatorInterface $validator
+     */
+    public function __construct(EntityManagerInterface $entityManager,         ValidatorInterface     $validator
+    )
     {
         $this->entityManager = $entityManager;
+        $this->validator = $validator;
     }
 
     /**
@@ -58,7 +68,10 @@ class AccountController extends AbstractController
         $account->setOpenDate($openDate);
         $account->setAccountNumber($requestData['account_number']);
         $account->setUser($user);
-
+        $errors = $this->validator->validate($account);
+        if (count($errors) > 0) {
+            return new JsonResponse((string) $errors);
+        }
         if (!$user) {
             throw new Exception("Users with this id not found");
         }
@@ -101,6 +114,7 @@ class AccountController extends AbstractController
 
     /**
      * @param string $id
+     * @param Request $request
      * @return JsonResponse
      * @throws Exception
      */
@@ -128,6 +142,10 @@ class AccountController extends AbstractController
 
         if (isset($requestData['account_number'])) {
             $account->setAccountNumber($requestData['account_number']);
+        }
+        $errors = $this->validator->validate($account);
+        if (count($errors) > 0) {
+            return new JsonResponse((string) $errors);
         }
         $this->entityManager->flush();
 
