@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\ProductRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -13,6 +14,21 @@ use App\Validator\Constraints\ProductConstraint;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 #[ProductConstraint]
+#[ApiResource(collectionOperations: [
+    "get"=>[
+        "method"=>"GET",
+        "security"=>"is_granted(' " . User::ROLE_USER . " ')"
+    ]
+],
+    itemOperations: [
+        "get"=>[
+            "method"=>"GET"
+        ]
+    ],
+    attributes: [
+        "security"=>"is_granted(' " . User::ROLE_ADMIN . " ')"
+    ]
+)]
 class Product implements JsonSerializable
 {
     #[ORM\Id]
@@ -31,11 +47,6 @@ class Product implements JsonSerializable
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\ManyToOne(targetEntity: Category::class,inversedBy: "product")]
-    private ?Category $category = null;
-
-    #[ORM\ManyToMany(targetEntity: Test::class)]
-    private Collection $test;
     /**
      * @return int|null
      */
@@ -86,40 +97,9 @@ class Product implements JsonSerializable
             "name" => $this->getName(),
             "price" => $this->getPrice(),
             "description" => $this->getDescription(),
-            "category"=>$this->getCategory()
 
         ];
     }
-
-    public function getTest(): Collection
-    {
-        return $this->test;
-    }
-
-    public function setTest(Collection $test): void
-    {
-        $this->test = $test;
-    }
-
-    public function getCategory(): ?Category
-    {
-        return $this->category;
-    }
-
-    public function setCategory(?Category $category): void
-    {
-        $this->category = $category;
-    }
-
-/*    public function getProductInfo(): ?ProductInfo
-    {
-        return $this->productInfo;
-    }
-
-    public function setProductInfo(?ProductInfo $productInfo): void
-    {
-        $this->productInfo = $productInfo;
-    }*/
 
 }
       
