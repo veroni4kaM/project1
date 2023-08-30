@@ -11,10 +11,36 @@ use JsonSerializable;
 use App\Validator\Constraints\AccountConstraint;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
+use ApiPlatform\Core\Annotation\ApiResource;
+
 
 
 #[ORM\Entity(repositoryClass: AccountRepository::class)]
 #[AccountConstraint]
+#[ApiResource(collectionOperations: [
+    "get" => [
+        "method" => "GET",
+        "security" => "is_granted(' " . User::ROLE_USER . " ') or is_granted(' " . User::ROLE_ADMIN . " ')"
+    ],
+    "post" => [
+        "method"=>"POST",
+        "security"=>"is_granted('" . User::ROLE_ADMIN . "')"
+    ]
+],
+    itemOperations: [
+        "get" => [
+            "method" => "GET"
+        ],
+        "put" => [
+            "method"=>"PUT",
+            "security"=>"is_granted('" . User::ROLE_ADMIN . "')"
+        ],
+        "delete" => [
+            "method"=>"DELETE",
+            "security"=>"is_granted('" . User::ROLE_ADMIN . "')"
+        ]
+    ]
+)]
 class Account implements JsonSerializable
 {
     #[ORM\Id]
@@ -42,20 +68,6 @@ class Account implements JsonSerializable
     #[ORM\Column(type: Types::DECIMAL, precision: 16, scale: '0')]
     #[NotBlank]
     private ?string $accountNumber = null;
-
-
-    /**
-     * @var User|null
-     */
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: "account")]
-    private ?User $user = null;
-
-    /**
-     * @var Collection
-     */
-    #[ORM\OneToMany(mappedBy: "account", targetEntity: Transaction::class)]
-    private Collection $transactions;
-
 
     /**
      * @return int|null
@@ -135,43 +147,6 @@ class Account implements JsonSerializable
             "balance" => $this->getBalance(),
             "open_data" => $this->getOpenDate(),
             "account_number" => $this->getAccountNumber(),
-            "user" => $this->getUser()
         ];
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getTransactions(): Collection
-    {
-        return $this->transactions;
-    }
-
-    /**
-     * @param Collection $transactions
-     * @return $this
-     */
-    public function setTransactions(Collection $transactions): self
-    {
-        $this->transactions = $transactions;
-        return $this;
-    }
-
-    /**
-     * @return User|null
-     */
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    /**
-     * @param User|null $user
-     * @return $this
-     */
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
-        return $this;
     }
 }

@@ -2,8 +2,10 @@
 
 namespace App\Validator\Constraints;
 
+use App\Core\Response;
 use App\Entity\Account;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -43,13 +45,13 @@ class AccountConstraintValidator extends ConstraintValidator
             $this->context->addViolation("Account number is empty");
         }
 
-        $user = $value->getUser();
+    /*    $user = $value->getUser();
         $accountRepository = $this->entityManager->getRepository(Account::class);
         $accountCount = $accountRepository->count(['user' => $user]);
 
         if ($accountCount >= 3) {
             $this->context->addViolation("User cannot have more than 3 accounts.");
-        }
+        }*/
 
         $accountRepository = $this->entityManager->getRepository(Account::class);
         $existingAccount = $accountRepository->findOneBy(['accountNumber' => $value]);

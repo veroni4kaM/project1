@@ -43,8 +43,7 @@ class TransactionController extends AbstractController
         if (!isset(
             $requestData['amount'],
             $requestData['transaction_date'],
-            $requestData['is_deposit'],
-            $requestData['account']
+            $requestData['is_deposit']
         )) {
             throw new Exception("Invalid request data");
         }
@@ -55,13 +54,10 @@ class TransactionController extends AbstractController
         $transaction->setAmount($requestData['amount']);
         $transaction->setTransactionDate(new DateTime($requestData['transaction_date']));
         $transaction->setIsDeposit($requestData['is_deposit']);
-        $transaction->setAccount($account);
 
-        // Перевірка, чи поточний користувач є власником транзакції
-        if ($this->getUser() !== $transaction->getAccount()) {
             $this->entityManager->persist($transaction);
             $this->entityManager->flush();
-        }
+
         if ($this->isTransactionAccessibleByUser($transaction)) {
             return new JsonResponse($transaction, Response::HTTP_CREATED);
         } else {
@@ -148,10 +144,8 @@ class TransactionController extends AbstractController
             throw new Exception("Transaction with id " . $id . " not found");
         }
         // Перевірка, чи поточний користувач є власником транзакції
-        if ($this->getUser() === $transaction->getAccount()) {
             $this->entityManager->remove($transaction);
             $this->entityManager->flush();
-        }
 
         if ($this->isTransactionAccessibleByUser($transaction)) {
             return new JsonResponse();
@@ -171,8 +165,7 @@ class TransactionController extends AbstractController
             $requestData['page'] ?? 1,
             $requestData['amount'] ?? null,
             $requestData['transaction_date'] ?? null,
-            $requestData['is_deposit'] ?? null,
-            $requestData['account_id'] ?? null
+            $requestData['is_deposit'] ?? null
         );
 
         return new JsonResponse($transactions);
@@ -180,7 +173,7 @@ class TransactionController extends AbstractController
     // Перевірка, чи користувач має доступ до цієї транзакції
     private function isTransactionAccessibleByUser(Transaction $transaction): bool
     {
-        return ($this->getUser() === $transaction->getAccount()->getUser());
+       // return ($this->getUser() === $transaction->getAccount()->getUser());
     }
 
 }

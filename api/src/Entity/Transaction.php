@@ -8,9 +8,37 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Annotation\ApiResource;
 
 
 #[ORM\Entity(repositoryClass: TransactionRepository::class)]
+#[ApiResource(collectionOperations: [
+    "get" => [
+        "method" => "GET",
+        "security" => "is_granted('" . User::ROLE_USER . "') or is_granted('" . User::ROLE_ADMIN . "')"
+    ],
+    "post" => [
+        "method" => "POST",
+        "security" => "is_granted('" . User::ROLE_USER . "')"
+    ]
+],
+    itemOperations: [
+        "get" => [
+            "method" => "GET",
+        ],
+        "put" => [
+            "method" => "PUT",
+            "security" => "is_granted('" . User::ROLE_USER . "')"
+        ],
+        "delete" => [
+            "method" => "DELETE",
+            "security" => "is_granted('" . User::ROLE_USER . "')"
+        ]
+    ],
+       attributes: [
+            "security" => "is_granted('" . User::ROLE_USER . "') or is_granted('" . User::ROLE_ADMIN . "')"
+        ]
+)]
 class Transaction implements JsonSerializable
 {
     /**
@@ -44,12 +72,6 @@ class Transaction implements JsonSerializable
     #[ORM\Column]
     #[Assert\NotNull]
     private ?bool $isDeposit = null;
-
-    /**
-     * @var Account|null
-     */
-    #[ORM\ManyToOne(targetEntity: Account::class, inversedBy: "transaction")]
-    private ?Account $account = null;
 
     /**
      * @return int|null
@@ -99,24 +121,6 @@ class Transaction implements JsonSerializable
 
 
     /**
-     * @return Account|null
-     */
-    public function getAccount(): ?Account
-    {
-        return $this->account;
-    }
-
-    /**
-     * @param Account|null $account
-     * @return $this
-     */
-    public function setAccount(?Account $account): self
-    {
-        $this->account = $account;
-        return $this;
-    }
-
-    /**
      * @return array
      */
     public function jsonSerialize(): array
@@ -126,7 +130,7 @@ class Transaction implements JsonSerializable
             "amount" => $this->getAmount(),
             "transaction_date" => $this->getTransactionDate(),
             "is_deposit" => $this->getIsDeposit(),
-            "account" => $this->getAccount()
+            //"account" => $this->getAccount()
         ];
     }
 

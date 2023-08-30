@@ -67,7 +67,6 @@ class AccountController extends AbstractController
         $account->setBalance($requestData['balance']);
         $account->setOpenDate($openDate);
         $account->setAccountNumber($requestData['account_number']);
-        $account->setUser($user);
         $errors = $this->validator->validate($account);
         if (count($errors) > 0) {
             return new JsonResponse((string)$errors);
@@ -190,8 +189,7 @@ class AccountController extends AbstractController
             $requestData['page'] ?? 1,
             $requestData['balance'] ?? null,
             $requestData['account_number'] ?? null,
-            $requestData['open_date'] ?? null,
-            $requestData['user_id'] ?? null
+            $requestData['open_date'] ?? null
         );
         return new JsonResponse($accounts);
     }
