@@ -1,4 +1,3 @@
-
 function Footer() {
 
     return (<div className="container">
@@ -51,4 +50,6 @@ function Footer() {
             </div>
         </footer>
     </div>);
+
 }
+export default Footer;
