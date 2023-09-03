@@ -7,26 +7,23 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Action\CreateProductAction;
+use App\Action\UpdateProductAction;
 use App\EntityListener\ProductEntityListener;
 use App\Repository\ProductRepository;
-use App\Validator\Constraints\Product as ProductConstraint;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
-#[ProductConstraint]
 #[ApiResource(
     collectionOperations: [
         "get"  => [
             "method"                => "GET",
-            "security"              => "is_granted('" . User::ROLE_USER . "')",
             "normalization_context" => ["groups" => ["get:collection:product"]]
         ],
         "post" => [
             "method"                  => "POST",
-            "security"                => "is_granted('" . User::ROLE_USER . "')",
             "denormalization_context" => ["groups" => ["post:collection:product"]],
             "normalization_context"   => ["groups" => ["get:item:product"]],
             "controller"              => CreateProductAction::class
@@ -36,10 +33,13 @@ use Symfony\Component\Validator\Constraints\NotBlank;
         "get" => [
             "method"                => "GET",
             "normalization_context" => ["groups" => ["get:item:product"]]
+        ],
+        "put" => [
+            "method"=>"PUT",
+            "denormalization_context" => ["groups" => ["put:item:product"]],
+            "normalization_context"   => ["groups" => ["get:item:product"]],
+            "controller" => UpdateProductAction::class
         ]
-    ],
-    attributes: [
-        "security" => "is_granted('" . User::ROLE_ADMIN . "') or is_granted('" . User::ROLE_USER . "')"
     ]
 )]
 #[ApiFilter(SearchFilter::class, properties: [
@@ -63,28 +63,32 @@ class Product
     #[Groups([
         "get:collection:product",
         "get:item:product",
-        "post:collection:product"
+        "post:collection:product",
+        "put:item:product"
     ])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 2, scale: '0')]
     #[Groups([
         "get:item:product",
-        "post:collection:product"
+        "post:collection:product",
+        "put:item:product"
     ])]
     private ?string $price = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Groups([
         "get:item:product",
-        "post:collection:product"
+        "post:collection:product",
+        "put:item:product"
     ])]
     private ?string $description = null;
 
     #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: "products")]
     #[Groups([
         "get:item:product",
-        "post:collection:product"
+        "post:collection:product",
+        "put:item:product"
     ])]
     private ?Category $category = null;
 
@@ -171,9 +175,11 @@ class Product
 
         return $this;
     }
-    #[ORM\PostPersist]
-    public function test(){
-
+    #[ORM\PostUpdate]
+    public function test()
+    {
+        $currentName = $this->name;
+        $newName = "1" . $currentName;
+        $this->name = $newName;
     }
-
 }

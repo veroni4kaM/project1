@@ -13,6 +13,8 @@ class ProductEvent extends Event
 {
 
     public const PRODUCT_CREATE = 'product.create';
+    public const PRODUCT_UPDATE = 'product.update';
+
 
     /**
      * @var Product

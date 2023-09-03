@@ -3,8 +3,10 @@
 
 namespace App\EventSubscriber;
 
-
+use App\Entity\Product;
 use App\Events\ProductEvent;
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -13,22 +15,34 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class ProductEventSubscriber implements EventSubscriberInterface
 {
+    private EntityManagerInterface $entityManager;
+    private EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @return array[]
-     */
+    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher)
+    {
+        $this->entityManager = $entityManager;
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
     public static function getSubscribedEvents(): array
     {
         return [
-            ProductEvent::PRODUCT_CREATE => 'onObjectCreate'
+            ProductEvent::PRODUCT_UPDATE => 'onPostUpdate'
         ];
     }
 
-
-    public function onObjectCreate(ProductEvent $event)
+    public function onPostUpdate(ProductEvent $args)
     {
-        $test = $event->getProduct();
-        dd(1);
-    }
+        $entity = $args->getProduct();
 
+        if ($entity instanceof Product) {
+            $product = $entity;
+
+            $currentName = $product->getName();
+            $newName = "1" . $currentName;
+            $product->setName($newName);
+
+            $this->entityManager->flush();
+        }
+    }
 }

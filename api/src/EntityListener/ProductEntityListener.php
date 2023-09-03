@@ -17,7 +17,7 @@ class ProductEntityListener
 
     public function postUpdate(Product $product, LifecycleEventArgs $eventArgs)
     {
-        $test = 1;
+        $changeSet = $eventArgs->getObjectManager()->getUnitOfWork()->getEntityChangeSet($product);
     }
 
     public function preUpdate(Product $product, LifecycleEventArgs $eventArgs)
@@ -29,5 +29,4 @@ class ProductEntityListener
     {
         $test = 1;
     }
-
 }
