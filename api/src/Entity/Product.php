@@ -176,10 +176,11 @@ class Product
         return $this;
     }
     #[ORM\PostUpdate]
-    public function test()
+    public function test(): self
     {
-        $currentName = $this->name;
+        /*$currentName = $this->name;
         $newName = "1" . $currentName;
-        $this->name = $newName;
+        $this->name = $newName;*/
+        return $this;
     }
 }
