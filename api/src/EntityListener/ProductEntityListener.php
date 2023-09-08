@@ -27,8 +27,6 @@ class ProductEntityListener
 
     public function prePersist(Product $product, LifecycleEventArgs $eventArgs)
     {
-        $currentName = $product->getName();
-        $newName = "1" . $currentName;
-        $product->setName($newName);
+
     }
 }

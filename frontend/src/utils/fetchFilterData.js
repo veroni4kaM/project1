@@ -1,27 +1,31 @@
 import queryString from "query-string";
 
 export const fetchFilterData = (data) => {
-  let filterUrl = "", firstLoopIteration = true;
+    let filterUrl = "", firstLoopIteration = true;
 
-  for (const [key, value] of Object.entries(data)) {
-    if (value === null || value === "") {
-      continue;
+    for (const [key, value] of Object.entries(data)) {
+        if (value === null || value === "") {
+            continue;
+        }
+
+        if (firstLoopIteration) {
+            filterUrl = filterUrl.concat("?" + key + "=" + value);
+
+            firstLoopIteration = false;
+        } else {
+            filterUrl = filterUrl.concat("&" + key + "=" + value);
+        }
     }
 
-    if (firstLoopIteration) {
-      filterUrl = filterUrl.concat("?" + key + "=" + value);
-
-      firstLoopIteration = false;
-    } else {
-      filterUrl = filterUrl.concat("&" + key + "=" + value);
+    if (data.priceMin !== null && data.priceMax !== null) {
+        filterUrl = filterUrl.concat("&price=" + data.priceMin + "-" + data.priceMax);
     }
-  }
 
-  return filterUrl;
+    return filterUrl;
 };
 
 export const checkFilterItem = (searchParams, item, defaultValue, isNumber = false, isConstant = false) => {
-  let filterItems = queryString.parse(searchParams.toString());
+    let filterItems = queryString.parse(searchParams.toString());
 
-  return filterItems[item] !== undefined && !isConstant ? (isNumber ? parseInt(filterItems[item]) : filterItems[item]) : defaultValue;
+    return filterItems[item] !== undefined && !isConstant ? (isNumber ? parseInt(filterItems[item]) : filterItems[item]) : defaultValue;
 };

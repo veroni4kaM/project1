@@ -8,6 +8,7 @@ import GoodsList from "./GoodsList";
 import {checkFilterItem, fetchFilterData} from "../../../utils/fetchFilterData";
 import userAuthenticationConfig from "../../../utils/userAuthenticationConfig";
 import GoodsFilter from "./GoodsFilter";
+import GoodsCreate from "./GoodsCreate";
 
 const GoodsContainer = () => {
 
@@ -24,10 +25,25 @@ const GoodsContainer = () => {
 
     const [filterData, setFilterData] = useState({
         "page": checkFilterItem(searchParams, "page", 1, true),
-        "name": checkFilterItem(searchParams, "name", null)
+        "name": checkFilterItem(searchParams, "name", null),
+        "priceMin": checkFilterItem(searchParams, "priceMin", null),
+        "priceMax": checkFilterItem(searchParams, "priceMax", null),
+        "description": checkFilterItem(searchParams, "description", null),
+        "creationDate": checkFilterItem(searchParams, "creationDate", null),
     });
-
+    const createProduct = (productData) => {
+        axios.post("/api/products", productData, userAuthenticationConfig())
+            .then((response) => {
+                if (response.status === responseStatus.HTTP_CREATED && response.data["hydra:member"]) {
+                    fetchProducts();
+                }
+            })
+            .catch((error) => {
+                console.error("Помилка при створенні продукту", error);
+            });
+    };
     const fetchProducts = () => {
+
         let filterUrl = fetchFilterData(filterData);
         navigate(filterUrl);
 
@@ -71,14 +87,24 @@ const GoodsContainer = () => {
             <Typography variant="h4" component="h1" mt={1}>
                 Goods
             </Typography>
+            <Typography component="h3" mt={1} color="inherit">
+                Створення продукту
+            </Typography>
+            <GoodsCreate createProduct={createProduct}/>
+            <Typography component="h3" mt={1} color="inherit">
+                Фільтрація
+            </Typography>
             <GoodsFilter
                 filterData={filterData}
                 setFilterData={setFilterData}
             />
+            <Typography component="h3" mt={1} color="inherit">
+                Продукти
+            </Typography>
             <GoodsList
                 goods={goods}
             />
-            {paginationInfo.totalPageCount &&
+            {paginationInfo.totalPageCount>=0 &&
                 <Pagination
                     count={paginationInfo.totalPageCount}
                     shape="rounded"

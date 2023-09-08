@@ -83,7 +83,8 @@ class ProductController extends AbstractController
             ->setPrice($requestData['price'])
             ->setName($requestData['name'])
             ->setDescription($requestData['description'])
-            ->setCategory($category);
+            ->setCategory($category)
+            ->setCreationDate($requestData['creation_date']);
 
         $this->entityManager->persist($product);
 

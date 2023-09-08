@@ -3,17 +3,17 @@ import eventBus from "./eventBus";
 
 const authentication = (navigate, authenticated, setVisible = null) => {
 
-  if (authenticated) {
-    const { userId, roles } = jwt_decode(localStorage.getItem("token"));
+    if (authenticated) {
+        const {userId, roles} = jwt_decode(localStorage.getItem("token"));
 
-    eventBus.dispatch("login-user", { "id": userId });
+        eventBus.dispatch("login-user", {"id": userId});
 
-    navigate("/");
+        navigate("/");
 
-    if (setVisible) {
-      setVisible(true);
+        if (setVisible) {
+            setVisible(true);
+        }
     }
-  }
 };
 
-export { authentication };
+export {authentication};
