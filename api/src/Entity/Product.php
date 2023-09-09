@@ -18,33 +18,34 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 #[ApiResource(
     collectionOperations: [
-        "get"  => [
-            "method"                => "GET",
+        "get" => [
+            "method" => "GET",
             "normalization_context" => ["groups" => ["get:collection:product"]]
         ],
         "post" => [
-            "method"                  => "POST",
+            "method" => "POST",
             "denormalization_context" => ["groups" => ["post:collection:product"]],
-            "normalization_context"   => ["groups" => ["get:item:product"]],
-            "controller"              => CreateProductAction::class
+            "normalization_context" => ["groups" => ["get:item:product"]]
         ]
     ],
     itemOperations: [
         "get" => [
-            "method"                => "GET",
+            "method" => "GET",
             "normalization_context" => ["groups" => ["get:item:product"]]
         ],
         "put" => [
-            "method"=>"PUT",
+            "method" => "PUT",
             "denormalization_context" => ["groups" => ["put:item:product"]],
-            "normalization_context"   => ["groups" => ["get:item:product"]],
+            "normalization_context" => ["groups" => ["get:item:product"]],
             "controller" => UpdateProductAction::class
         ]
     ]
 )]
 #[ApiFilter(SearchFilter::class, properties: [
     "name" => "partial",
-    "description"
+    "price",
+    "description"=> "partial",
+    "creationDate"
 ])]
 #[ApiFilter(RangeFilter::class, properties: ['price'])]
 #[ORM\EntityListeners([ProductEntityListener::class])]
@@ -71,6 +72,7 @@ class Product
     #[ORM\Column(type: Types::DECIMAL, precision: 2, scale: '0')]
     #[Groups([
         "get:item:product",
+        "get:collection:product",
         "post:collection:product",
         "put:item:product"
     ])]
@@ -79,6 +81,7 @@ class Product
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Groups([
         "get:item:product",
+        "get:collection:product",
         "post:collection:product",
         "put:item:product"
     ])]
@@ -91,6 +94,18 @@ class Product
         "put:item:product"
     ])]
     private ?Category $category = null;
+
+    /**
+     * @var string|null
+     */
+    #[ORM\Column(type: Types::BIGINT, nullable: true)]
+    #[Groups([
+        "get:item:product",
+        "get:collection:product",
+        "post:collection:product",
+        "put:item:product"
+    ])]
+    private ?string $creationDate = null;
 
     /**
      * @return int|null
@@ -175,12 +190,23 @@ class Product
 
         return $this;
     }
-    #[ORM\PostUpdate]
-    public function test(): self
+
+    /**
+     * @return string|null
+     */
+    public function getCreationDate(): ?string
     {
-        /*$currentName = $this->name;
-        $newName = "1" . $currentName;
-        $this->name = $newName;*/
+        return $this->creationDate;
+    }
+
+    /**
+     * @param string|null $creationDate
+     * @return $this
+     */
+    public function setCreationDate(?string $creationDate): self
+    {
+        $this->creationDate = $creationDate;
         return $this;
     }
+
 }
