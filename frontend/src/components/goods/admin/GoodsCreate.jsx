@@ -78,19 +78,6 @@ const GoodsCreate = ({createProduct}) => {
                         />
                     </FormControl>
                 </Grid>
-                {/*<Grid item xs={12}>
-                    <FormControl fullWidth>
-                        <InputLabel htmlFor="creationDate"></InputLabel>
-                        <Input
-                            id="creationDate"
-                            name="creationDate"
-                            type="date"
-                            value={productData.creationDate}
-                            onChange={handleChange}
-                            required
-                        />
-                    </FormControl>
-                </Grid>*/}
                 <Grid item xs={12}>
                     <Button type="submit" variant="contained" color="primary">
                         Створити продукт

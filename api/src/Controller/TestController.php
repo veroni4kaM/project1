@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Product;
 use App\Entity\User;
+use App\Services\ValidatorService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -48,6 +49,8 @@ class TestController extends AbstractController
      */
     public function fetchProductsForUser(array $products): array
     {
+        $test = ValidatorService::test();
+
         $fetchedProductsForUser = null;
 
         /** @var Product $product */
